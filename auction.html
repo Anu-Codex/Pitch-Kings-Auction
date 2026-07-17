@@ -160,14 +160,7 @@
                 <button onclick="showAuthStep('choice')" class="text-gray-500 text-sm uppercase font-bold">Back</button>
             </div>
 
-            <!-- STEP 4: OTP VERIFICATION -->
-            <div id="auth_otp" class="hidden space-y-6">
-                <div class="text-cyan-400"><i class="fa-solid fa-envelope-circle-check text-5xl"></i></div>
-                <h2 class="text-2xl font-bold text-white uppercase">Verify Email</h2>
-                <p class="text-gray-400 text-sm">We've sent a 6-digit code to your email.</p>
-                <input type="text" id="otp_input" placeholder="000000" class="w-full bg-gray-900 border border-white/10 p-4 rounded-2xl outline-none focus:border-cyan-400 text-white text-center text-3xl tracking-[1rem] font-bold">
-                <button onclick="handleVerifyOTP()" class="w-full ef-gradient text-black font-black py-4 rounded-2xl btn-premium uppercase">Enter Arena</button>
-            </div>
+            
 
             <p id="authError" class="text-red-400 text-sm mt-6 hidden font-bold"></p>
         </div>
@@ -324,7 +317,7 @@
     <!-- Hidden input for updating existing players -->
 <input type="file" id="updateImgInput" accept="image/*" class="hidden" onchange="processImageUpdate(this)">
     <script>
-    const socket = io("https://nl-auc-go.onrender.com"); 
+    const socket = io("https://pk-auc.onrender.com"); 
     
     let currentPlayers = [];
     let currentTeams = [];
@@ -336,10 +329,9 @@
     function showAuthStep(step) {
         document.getElementById('auth_choice').classList.add('hidden');
         document.getElementById('auth_special').classList.add('hidden');
-        document.getElementById('auth_otp').classList.add('hidden');
+        // OTP line removed here
         
         if(step === 'choice') document.getElementById('auth_choice').classList.remove('hidden');
-        if(step === 'otp') document.getElementById('auth_otp').classList.remove('hidden');
         
         if(step === 'captain' || step === 'admin') {
             authType = step;
@@ -362,11 +354,7 @@
         socket.emit('specialSignIn', { email: tempEmail, password: pass, type: authType });
     }
 
-    function handleVerifyOTP() {
-        const otp = document.getElementById('otp_input').value.trim();
-        if(!otp) return showError("Please enter the 6-digit OTP");
-        socket.emit('verifyOTP', { email: tempEmail, otp: otp });
-    }
+    
 
     function showError(msg) {
         const err = document.getElementById('authError');
@@ -376,9 +364,7 @@
     }
 
     // --- AUTH SOCKET LISTENERS (RESTORING MISSING LISTENERS) ---
-    socket.on('authStep', step => { 
-        if(step === 'otp_verify') showAuthStep('otp'); 
-    });
+    
 
     socket.on('errorMsg', msg => showError(msg));
 
